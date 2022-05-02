@@ -1,0 +1,11 @@
+node_modules
+.vscode/settings.json
+.aws/templates.json
+yarn-error.log
+.aws-sam
+.aws/env.json
+dev/.env
+package-lock.json
+*.pdf
+files/*
+.env
