@@ -1,16 +1,17 @@
 export interface FivetranRequest {
   agent: string;
-  state: {
+  state?: {
     cursor: string;
   };
   secrets?: {
     [k: string]: string;
   };
+  setup_test?: boolean;
 }
 
 export interface FivetranResponse {
   state?: {
-    [cursorName: string]: string;
+    [cursorName: string]: string | number;
   };
   insert?: {
     [tableName: string]: any[];

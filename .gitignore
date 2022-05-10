@@ -9,3 +9,5 @@ package-lock.json
 *.pdf
 files/*
 .env
+build/*
+.serverless

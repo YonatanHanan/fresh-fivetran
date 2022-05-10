@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --transpile-only --respawn src/dev.ts"
+    "dev": "ts-node-dev --transpile-only --respawn src/dev.ts",
+    "build": "tsc && serverless deploy",
+    "freshchat": "tsc && serverless invoke local --function getFreshchat",
+    "freshdesk": "tsc && serverless invoke local --function getFreshdesk"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +18,7 @@
     "@types/yauzl": "^2.10.0",
     "axios": "^0.27.2",
     "csvtojson": "^2.0.10",
+    "date-fns": "^2.28.0",
     "dotenv": "^16.0.0",
     "lodash": "^4.17.21",
     "ts-node-dev": "^1.1.8",
