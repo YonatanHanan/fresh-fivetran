@@ -66,7 +66,7 @@ export const freshChatHandler = async (event: FivetranRequest, context, callback
     endDate = addDays(startDate, 3);
   }
 
-  console.log(`freshChatHandler [startDate=${startDate}, endDate=${addWeeks(startDate, 1)}]`);
+  console.log(`freshChatHandler [startDate=${startDate}, endDate=${endDate}]`);
   // fetch the data
   const agents = await getAllAgents();
   console.log(`agents [count=${agents.length}]`);
@@ -83,7 +83,7 @@ export const freshChatHandler = async (event: FivetranRequest, context, callback
     try {
       await sleep(5000);
 
-      reports[report] = await getReport(startDate, addWeeks(startDate, 1), report);
+      reports[report] = await getReport(startDate, endDate, report);
       console.log(`getReport [report=${report},length=${reports[report].length}]`);
     } catch (error) {
       console.error(`getReport fail [report=${report},error=${error.toString()}]`);
