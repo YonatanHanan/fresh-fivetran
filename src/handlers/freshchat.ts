@@ -3,7 +3,7 @@ import { FivetranRequest, FivetranResponse } from '../types/fivetran';
 import { forEach, lowerCase, replace, has } from 'lodash';
 import { ReportTypes } from '../types/freshchat';
 import { addWeeks, subHours, addDays, parseISO } from 'date-fns';
-import { base64AndMD5 } from '../common/hash';
+import { createMD5Hash } from '../common/hash';
 
 const START_DATE = new Date(2021, 2, 1);
 const SCHEMA = {
@@ -82,7 +82,7 @@ export const freshChatHandler = async (event: FivetranRequest, context, callback
   for (let i = 0; i < ReportTypes.length; i++) {
     const report = ReportTypes[i];
     try {
-      await sleep(ONE_MINUTE);
+      await sleep(ONE_MINUTE / 2);
 
       reports[report] = await getReport(startDate, endDate, report);
       console.log(`getReport [report=${report},length=${reports[report].length}]`);
@@ -105,7 +105,7 @@ export const freshChatHandler = async (event: FivetranRequest, context, callback
     insertObject[tableName] = reports[reportName];
   });
 
-  const dataHash = base64AndMD5(JSON.stringify(insertObject));
+  const dataHash = createMD5Hash(JSON.stringify(insertObject));
 
   const resp: FivetranResponse = {
     insert: insertObject,

@@ -1,7 +1,14 @@
 import { FivetranRequest, FivetranResponse } from '../types/fivetran';
 import { getAllCallMetrics, getAllCalls, getAllTeams, getAllUsers } from '../api/fresh.caller.api';
-import { base64AndMD5 } from '../common/hash';
+import { createMD5Hash } from '../common/hash';
 import { has, chunk } from 'lodash';
+
+const CHUNK_SIZE = 500;
+
+const eventHasStateParams = (event: FivetranRequest) =>
+  has(event, 'state.currentHash') &&
+  has(event, 'state.calls_chunkNumber') &&
+  has(event, 'state.callMetrics_chunkNumber');
 
 export const freshCallerHandler = async (event: FivetranRequest, context, callback) => {
   console.log(JSON.stringify(event));
@@ -12,17 +19,23 @@ export const freshCallerHandler = async (event: FivetranRequest, context, callba
   }
 
   let stateHash = '';
-  let chunkNumber = 0;
+  let calls_chunkNumber = 0;
+  let callMetrics_chunkNumber = 0;
 
-  if (has(event, 'state.currentHash') && has(event, 'state.chunkNumber')) {
+  if (eventHasStateParams(event)) {
     stateHash = event.state['currentHash'];
-    chunkNumber = parseInt(event.state['chunkNumber']) + 1;
+    calls_chunkNumber = parseInt(event.state['calls_chunkNumber']) + 1;
+    callMetrics_chunkNumber = parseInt(event.state['callMetrics_chunkNumber']) + 1;
   }
 
-  console.log(`freshCallerHandler [chunkNumber=${chunkNumber}, stateHash=${stateHash}]`);
+  console.log(
+    `freshCallerHandler [calls_chunkNumber=${calls_chunkNumber}, callMetrics_chunkNumber=${callMetrics_chunkNumber}, stateHash=${stateHash}]`
+  );
 
-  const calls = chunk(await getAllCalls(), 500)[chunkNumber];
-  console.log(`calls [count=${calls.length}]`);
+  const calls = chunk(await getAllCalls(), CHUNK_SIZE);
+  const callsChunks = calls.length;
+
+  console.log(`calls [callsChunks=${callsChunks}, dataSize=${CHUNK_SIZE * callsChunks}]`);
 
   const teams = await getAllTeams();
   console.log(`teams [count=${teams.length}]`);
@@ -30,23 +43,25 @@ export const freshCallerHandler = async (event: FivetranRequest, context, callba
   const users = await getAllUsers();
   console.log(`users [count=${users.length}]`);
 
-  const callMetrics = chunk(await getAllCallMetrics(), 500)[chunkNumber];
-  console.log(`callMetrics [count=${callMetrics.length}]`);
+  const callMetrics = chunk(await getAllCallMetrics(), CHUNK_SIZE);
+  const callMetricsChunks = callMetrics.length;
+  console.log(`callMetrics [callMetricsChunks=${callMetricsChunks}, dataSize=${CHUNK_SIZE * callMetricsChunks}]`);
 
   const insertObject = {
-    freshcaller_calls: calls,
+    freshcaller_calls: calls_chunkNumber < callsChunks ? calls[calls_chunkNumber] : [],
     freshcaller_teams: teams,
     freshcaller_users: users,
-    freshcaller_callmetrics: callMetrics,
+    freshcaller_callmetrics: callMetrics_chunkNumber < callMetricsChunks ? callMetrics[callMetrics_chunkNumber] : [],
   };
 
-  const dataHash = base64AndMD5(JSON.stringify(insertObject));
+  const dataHash = createMD5Hash(JSON.stringify(insertObject));
 
   const resp: FivetranResponse = {
     insert: insertObject,
     state: {
       currentHash: dataHash,
-      chunkNumber,
+      calls_chunkNumber,
+      callMetrics_chunkNumber,
     },
     hasMore: dataHash != stateHash,
   };
