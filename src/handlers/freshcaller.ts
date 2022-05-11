@@ -19,28 +19,33 @@ export const freshCallerHandler = async (event: FivetranRequest, context, callba
   }
 
   let stateHash = '';
+  let usersHash = '';
+  let teamsHash = '';
   let calls_chunkNumber = 0;
   let callMetrics_chunkNumber = 0;
 
   if (eventHasStateParams(event)) {
     stateHash = event.state['currentHash'];
+    usersHash = event.state['usersHash'];
+    teamsHash = event.state['teamsHash'];
     calls_chunkNumber = parseInt(event.state['calls_chunkNumber']) + 1;
     callMetrics_chunkNumber = parseInt(event.state['callMetrics_chunkNumber']) + 1;
   }
 
   console.log(
-    `freshCallerHandler [calls_chunkNumber=${calls_chunkNumber}, callMetrics_chunkNumber=${callMetrics_chunkNumber}, stateHash=${stateHash}]`
+    `freshCallerHandler [calls_chunkNumber=${calls_chunkNumber}, callMetrics_chunkNumber=${callMetrics_chunkNumber}, usersHash=${stateHash}]`
   );
 
   const calls = chunk(await getAllCalls(), CHUNK_SIZE);
   const callsChunks = calls.length;
-
   console.log(`calls [callsChunks=${callsChunks}, dataSize=${CHUNK_SIZE * callsChunks}]`);
 
   const teams = await getAllTeams();
+  const teamsDataHash = createMD5Hash(JSON.stringify(teams));
   console.log(`teams [count=${teams.length}]`);
 
   const users = await getAllUsers();
+  const usersDataHash = createMD5Hash(JSON.stringify(users));
   console.log(`users [count=${users.length}]`);
 
   const callMetrics = chunk(await getAllCallMetrics(), CHUNK_SIZE);
@@ -49,8 +54,8 @@ export const freshCallerHandler = async (event: FivetranRequest, context, callba
 
   const insertObject = {
     freshcaller_calls: calls_chunkNumber < callsChunks ? calls[calls_chunkNumber] : [],
-    freshcaller_teams: teams,
-    freshcaller_users: users,
+    freshcaller_teams: teamsDataHash != teamsHash ? teams : [],
+    freshcaller_users: usersDataHash != usersHash ? users : [],
     freshcaller_callmetrics: callMetrics_chunkNumber < callMetricsChunks ? callMetrics[callMetrics_chunkNumber] : [],
   };
 
@@ -62,6 +67,8 @@ export const freshCallerHandler = async (event: FivetranRequest, context, callba
       currentHash: dataHash,
       calls_chunkNumber,
       callMetrics_chunkNumber,
+      usersHash: usersDataHash,
+      teamsHash: teamsDataHash,
     },
     hasMore: dataHash != stateHash,
   };
