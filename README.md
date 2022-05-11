@@ -14,5 +14,4 @@ We used **serverless** to deploy.
 The reason the function is using _Function URL_ and not _API Gateway_ is because the timeout limit.
 
 Some of the type declarations are present but not used because we decided to implement the _transform_ phase via SQL.
-
-![structure](https://user-images.githubusercontent.com/6177147/167792794-2427b232-fc05-4cd4-96a9-dcd1b8c8d3d0.svg)
+![structure](https://user-images.githubusercontent.com/6177147/167792943-a4b11af1-b348-4b41-8e37-6871f114bcdb.svg)
