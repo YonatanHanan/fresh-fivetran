@@ -1,7 +1,7 @@
 export interface FivetranRequest {
   agent: string;
   state?: {
-    cursor: string;
+    [k: string]: string | number;
   };
   secrets?: {
     [k: string]: string;

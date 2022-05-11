@@ -25,11 +25,11 @@ export const freshCallerHandler = async (event: FivetranRequest, context, callba
   let callMetrics_chunkNumber = 0;
 
   if (eventHasStateParams(event)) {
-    stateHash = event.state['currentHash'];
-    usersHash = event.state['usersHash'];
-    teamsHash = event.state['teamsHash'];
-    calls_chunkNumber = parseInt(event.state['calls_chunkNumber']) + 1;
-    callMetrics_chunkNumber = parseInt(event.state['callMetrics_chunkNumber']) + 1;
+    stateHash = event.state['currentHash'] as string;
+    usersHash = event.state['usersHash'] as string;
+    teamsHash = event.state['teamsHash'] as string;
+    calls_chunkNumber = parseInt(event.state['calls_chunkNumber'] as string) + 1;
+    callMetrics_chunkNumber = parseInt(event.state['callMetrics_chunkNumber'] as string) + 1;
   }
 
   console.log(
