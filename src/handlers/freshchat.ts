@@ -45,14 +45,15 @@ const SCHEMA = {
 const ONE_MINUTE = 60 * 1000;
 
 export const freshChatHandler = async (event: FivetranRequest, context, callback) => {
-  await sleep(3 * ONE_MINUTE);
-
   console.log(JSON.stringify(event));
 
-  if (has(event, 'setup_test') || event?.setup_test === true) {
+  if (has(event, 'setup_test') && event?.setup_test === true) {
+    console.log(`setup test`);
     callback(null, true);
     return;
   }
+
+  await sleep(3 * ONE_MINUTE);
 
   let startDate = subHours(new Date(), 1);
   let endDate = new Date();

@@ -10,7 +10,7 @@ require('dotenv').config();
         apiKey: 'yourApiKey',
       },
       agent: 'Fivetran AWS Lambda Connector/fivetran/aws_lambda',
-      setup_test: true,
+      setup_test: false,
     },
     {},
     () => {}
