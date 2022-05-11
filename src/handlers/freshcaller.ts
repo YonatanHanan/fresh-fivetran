@@ -19,7 +19,7 @@ export const freshCallerHandler = async (event: FivetranRequest, context, callba
     chunkNumber = parseInt(event.state['chunkNumber']) + 1;
   }
 
-  console.log(`freshCallerHandler`);
+  console.log(`freshCallerHandler [chunkNumber=${chunkNumber}, stateHash=${stateHash}]`);
 
   const calls = chunk(await getAllCalls(), 500)[chunkNumber];
   console.log(`calls [count=${calls.length}]`);
