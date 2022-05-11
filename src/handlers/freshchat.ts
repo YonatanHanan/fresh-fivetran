@@ -43,6 +43,7 @@ const SCHEMA = {
 };
 
 const ONE_MINUTE = 60 * 1000;
+
 export const freshChatHandler = async (event: FivetranRequest, context, callback) => {
   await sleep(3 * ONE_MINUTE);
 
@@ -81,7 +82,7 @@ export const freshChatHandler = async (event: FivetranRequest, context, callback
   for (let i = 0; i < ReportTypes.length; i++) {
     const report = ReportTypes[i];
     try {
-      await sleep(5000);
+      await sleep(ONE_MINUTE);
 
       reports[report] = await getReport(startDate, endDate, report);
       console.log(`getReport [report=${report},length=${reports[report].length}]`);
