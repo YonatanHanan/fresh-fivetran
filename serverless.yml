@@ -1,4 +1,4 @@
-service: freshworks-data
+service: fivetran-data
 
 provider:
   name: aws

@@ -15,6 +15,7 @@ export enum FreshChatEndpoints {
   channels = '/v2/channels',
   groups = '/v2/groups',
   report = '/v2/reports/raw',
+  users = '/v2/users',
 }
 
 export const freshCallerAPI = axios.create({

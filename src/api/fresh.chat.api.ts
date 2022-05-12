@@ -3,7 +3,7 @@ import { get, post } from './common.api';
 import { flatten, map } from 'lodash';
 import axios from 'axios';
 import * as yauzl from 'yauzl';
-import * as csvtojson from 'csvtojson';
+const csvtojson = require('csvtojson/v2');
 import { formatISO } from 'date-fns';
 
 export const getAllAgents = async () => {
@@ -87,4 +87,18 @@ export const getReport = async (startDate: Date, endDate: Date, reportType: stri
   );
 
   return flatten(data);
+};
+
+export const getUser = async (userId) => {
+  const response = await get(freshChatAPI, `${FreshChatEndpoints.users}/${userId}`);
+  return response[0];
+};
+
+export const getUsers = async (usersIds: string[]) => {
+  return await Promise.all(
+    map(usersIds, async (userId) => {
+      const response = await get(freshChatAPI, `${FreshChatEndpoints.users}/${userId}`);
+      return response[0];
+    })
+  );
 };
