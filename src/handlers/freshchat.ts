@@ -1,6 +1,6 @@
 import { getAllAgents, getAllChannels, getAllGroups, getReport, getUsers, sleep } from '../api/fresh.chat.api';
 import { FivetranRequest, FivetranResponse } from '../types/fivetran';
-import { forEach, lowerCase, replace, has, map } from 'lodash';
+import { forEach, lowerCase, replace, has, map, uniq } from 'lodash';
 import { ReportTypes } from '../types/freshchat';
 import { addWeeks, subHours, addDays, parseISO, isYesterday } from 'date-fns';
 import { createMD5Hash } from '../common/hash';
@@ -113,8 +113,9 @@ export const freshChatHandler = async (event: FivetranRequest, context, callback
   console.log(`reports ${JSON.stringify(Object.keys(reports))}`);
 
   insertObject['freshchat_users'] = await getUsers(
-    map(insertObject['freshchat_report_conversation_created'], (row) => row.user_id)
+    uniq(map(insertObject['freshchat_report_conversation_created'], (row) => row.user_id))
   );
+  console.log(`freshchat_users [length=${insertObject['freshchat_users'].length}]`);
 
   const dataHash = createMD5Hash(JSON.stringify(insertObject));
 
