@@ -96,8 +96,6 @@ export const freshChatHandler = async (event: FivetranRequest, context, callback
       callback(new Error('to many requests'), null);
       return;
     }
-  }
-  console.log(`reports ${JSON.stringify(Object.keys(reports))}`);
 
   let insertObject = {
     freshchat_agents: agents,
@@ -110,12 +108,13 @@ export const freshChatHandler = async (event: FivetranRequest, context, callback
     insertObject[tableName] = reports[reportName];
   });
 
-  console.log(`reports ${JSON.stringify(Object.keys(reports))}`);
-
   insertObject['freshchat_users'] = await getUsers(
     uniq(map(insertObject['freshchat_report_conversation_created'], (row) => row.user_id))
   );
   console.log(`freshchat_users [length=${insertObject['freshchat_users'].length}]`);
+
+  console.log(`insertObject ${JSON.stringify(Object.keys(insertObject))}`);
+
 
   const dataHash = createMD5Hash(JSON.stringify(insertObject));
 
