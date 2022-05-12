@@ -53,8 +53,6 @@ export const freshChatHandler = async (event: FivetranRequest, context, callback
     return;
   }
 
-  await sleep(3 * ONE_MINUTE);
-
   let startDate = subHours(new Date(), 1);
   let endDate = new Date();
   let stateHash = '';
@@ -63,6 +61,8 @@ export const freshChatHandler = async (event: FivetranRequest, context, callback
     startDate = START_DATE;
     endDate = addWeeks(startDate, 1);
   } else {
+    await sleep(3 * ONE_MINUTE);
+
     startDate = parseISO(event.state['fresh_start_date'] as string);
     stateHash = event.state['currentHash'] as string;
 
