@@ -48,6 +48,12 @@ const SCHEMA = {
   freshchat_report_resolution_time: {
     primary_key: ['agent_id', 'interaction_id', 'conversation_id', 'actor_id', 'channel_id'],
   },
+  freshchat_conversation: {
+    primary_key: ['conversation_id'],
+  },
+  freshchat_users: {
+    primary_key: ['id'],
+  },
 };
 
 const ONE_MINUTE = 60 * 1000;
