@@ -1,6 +1,14 @@
-import { getAllAgents, getAllChannels, getAllGroups, getReport, getUsers, sleep } from '../api/fresh.chat.api';
+import {
+  getAllAgents,
+  getAllChannels,
+  getAllGroups,
+  getConversations,
+  getReport,
+  getUsers,
+  sleep,
+} from '../api/fresh.chat.api';
 import { FivetranRequest, FivetranResponse } from '../types/fivetran';
-import { forEach, lowerCase, replace, has, map, uniq } from 'lodash';
+import { forEach, lowerCase, replace, has, map, uniq, flatten } from 'lodash';
 import { ReportTypes } from '../types/freshchat';
 import { addWeeks, subHours, addDays, parseISO, isYesterday } from 'date-fns';
 import { createMD5Hash } from '../common/hash';
@@ -96,6 +104,7 @@ export const freshChatHandler = async (event: FivetranRequest, context, callback
       callback(new Error('to many requests'), null);
       return;
     }
+  }
 
   let insertObject = {
     freshchat_agents: agents,
@@ -113,8 +122,19 @@ export const freshChatHandler = async (event: FivetranRequest, context, callback
   );
   console.log(`freshchat_users [length=${insertObject['freshchat_users'].length}]`);
 
-  console.log(`insertObject ${JSON.stringify(Object.keys(insertObject))}`);
+  const conversationIds = uniq(
+    flatten([
+      ...map(insertObject['freshchat_report_conversation_created'], (row) => row.conversation_id),
+      ...map(insertObject['freshchat_report_conversation_resolved'], (row) => row.conversation_id),
+      ...map(insertObject['freshchat_report_message_sent'], (row) => row.conversation_id),
+      ...map(insertObject['freshchat_report_resolution_time'], (row) => row.conversation_id),
+    ])
+  );
 
+  insertObject['freshchat_conversation'] = await getConversations(conversationIds);
+  console.log(`freshchat_conversation [length=${insertObject['freshchat_conversation'].length}]`);
+
+  console.log(`insertObject ${JSON.stringify(Object.keys(insertObject))}`);
 
   const dataHash = createMD5Hash(JSON.stringify(insertObject));
 

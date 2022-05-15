@@ -97,8 +97,20 @@ export const getUser = async (userId) => {
 export const getUsers = async (usersIds: string[]) => {
   return await Promise.all(
     map(usersIds, async (userId) => {
-      const response = await get(freshChatAPI, `${FreshChatEndpoints.users}/${userId}`);
-      return response[0];
+      return await getUser(userId);
+    })
+  );
+};
+
+export const getConversation = async (conversationId) => {
+  const response = await get(freshChatAPI, `${FreshChatEndpoints.conversation}/${conversationId}`);
+  return response[0];
+};
+
+export const getConversations = async (conversationIds: string[]) => {
+  return await Promise.all(
+    map(conversationIds, async (conversationId) => {
+      return await getConversation(conversationId);
     })
   );
 };
