@@ -15,7 +15,7 @@ The reason the function is using _Function URL_ and not _API Gateway_ is because
 
 Some of the type declarations are present but not used because we decided to implement the _transform_ phase via SQL.
 
-![structure](https://user-images.githubusercontent.com/6177147/167793011-41cdf228-1eed-4cf2-be04-4d72a0aacef7.svg)
+![image](https://user-images.githubusercontent.com/6177147/168762844-46d23601-b753-4d9d-aba4-ff92ff155477.png)
 
 API Reference links:
 
