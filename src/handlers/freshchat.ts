@@ -9,52 +9,11 @@ import {
 } from '../api/fresh.chat.api';
 import { FivetranRequest, FivetranResponse } from '../types/fivetran';
 import { forEach, lowerCase, replace, has, map, uniq, flatten } from 'lodash';
-import { ReportTypes } from '../types/freshchat';
+import { ReportTypes, SCHEMA } from '../types/freshchat';
 import { addWeeks, subHours, addDays, parseISO, isYesterday } from 'date-fns';
 import { createMD5Hash } from '../common/hash';
 
 const START_DATE = new Date(2021, 2, 1);
-const SCHEMA = {
-  freshchat_agents: {
-    primary_key: ['id'],
-  },
-  freshchat_channels: {
-    primary_key: ['id'],
-  },
-  freshchat_groups: {
-    primary_key: ['id'],
-  },
-  freshchat_report_conversation_created: {
-    primary_key: ['conversation_id', 'interaction_id'],
-  },
-  freshchat_report_message_sent: {
-    primary_key: ['interaction_id', 'conversation_id', 'channel_id'],
-  },
-  freshchat_report_conversation_resolved: {
-    primary_key: ['agent_id', 'interaction_id', 'conversation_id', 'channel_id'],
-  },
-  freshchat_report_csat_score: {
-    primary_key: ['agent_id', 'csat_id', 'csat_submitter_user_id', 'channel_id', 'actor_id'],
-  },
-  freshchat_report_conversation_resolution_label: {
-    primary_key: ['agent_id', 'actor_id', 'channel_id'],
-  },
-  freshchat_report_agent_activity: {
-    primary_key: ['agent_id'],
-  },
-  freshchat_report_response_time: {
-    primary_key: ['agent_id', 'interaction_id', 'channel_id'],
-  },
-  freshchat_report_resolution_time: {
-    primary_key: ['agent_id', 'interaction_id', 'conversation_id', 'actor_id', 'channel_id'],
-  },
-  freshchat_conversation: {
-    primary_key: ['conversation_id'],
-  },
-  freshchat_users: {
-    primary_key: ['id'],
-  },
-};
 
 const ONE_MINUTE = 60 * 1000;
 
@@ -136,7 +95,6 @@ export const freshChatHandler = async (event: FivetranRequest, context, callback
       ...map(insertObject['freshchat_report_resolution_time'], (row) => row.conversation_id),
     ])
   );
-
   insertObject['freshchat_conversation'] = await getConversations(conversationIds);
   console.log(`freshchat_conversation [length=${insertObject['freshchat_conversation'].length}]`);
 

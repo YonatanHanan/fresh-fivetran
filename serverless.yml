@@ -8,8 +8,8 @@ functions:
   getFreshcaller:
     handler: build/index.getFreshcaller
     timeout: 900
-    url: true
+    # url: true
   getFreshchat:
     handler: build/index.getFreshchat
     timeout: 900
-    url: true
+    # url: true
