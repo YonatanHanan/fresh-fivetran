@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --transpile-only --respawn src/dev.ts",
-    "build": "tsc && serverless deploy",
+    "build": "tsc",
+    "build:deploy": "tsc && serverless deploy",
     "freshchat": "tsc && serverless invoke local --function getFreshchat",
     "freshdesk": "tsc && serverless invoke local --function getFreshdesk"
   },

@@ -6,10 +6,11 @@ phases:
     runtime-versions:
       nodejs: 12
     commands:
-      - npm install -g serverless
+      - npm install -g serverless typescript
       - npm install
   build:
     commands:
+      - npm run build
       - serverless deploy --stage ${STAGE_NAME}
 
 cache:
