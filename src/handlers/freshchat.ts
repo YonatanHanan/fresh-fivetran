@@ -39,10 +39,7 @@ export const freshChatHandler = async (event: FivetranRequest, context, callback
     startDate = parseISO(event.state['fresh_start_date'] as string);
     stateHash = event.state['currentHash'] as string;
 
-    endDate = addDays(startDate, 3);
-    if (isYesterday(startDate)) {
-      endDate = new Date();
-    }
+    endDate = new Date();
   }
 
   console.log(`freshChatHandler [startDate=${startDate}, endDate=${endDate}]`);
