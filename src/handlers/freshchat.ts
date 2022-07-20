@@ -13,7 +13,7 @@ import { ReportTypes, SCHEMA } from '../types/freshchat';
 import { addWeeks, subHours, addDays, parseISO, isYesterday } from 'date-fns';
 import { createMD5Hash } from '../common/hash';
 
-const START_DATE = new Date(2021, 2, 1);
+const START_DATE = new Date(2021, 3, 25);
 
 const ONE_MINUTE = 60 * 1000;
 
