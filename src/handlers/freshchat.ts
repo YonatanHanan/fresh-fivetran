@@ -10,7 +10,7 @@ import {
 import { FivetranRequest, FivetranResponse } from '../types/fivetran';
 import { forEach, lowerCase, replace, has, map, uniq, flatten } from 'lodash';
 import { ReportTypes, SCHEMA } from '../types/freshchat';
-import { addWeeks, subHours, addDays, parseISO, isYesterday } from 'date-fns';
+import { addWeeks, subHours, addDays, parseISO, min } from 'date-fns';
 import { createMD5Hash } from '../common/hash';
 
 const START_DATE = new Date(2021, 3, 25);
@@ -39,7 +39,7 @@ export const freshChatHandler = async (event: FivetranRequest, context, callback
     startDate = parseISO(event.state['fresh_start_date'] as string);
     stateHash = event.state['currentHash'] as string;
 
-    endDate = new Date();
+    endDate = min([addDays(startDate, 3), new Date()]);
   }
 
   console.log(`freshChatHandler [startDate=${startDate}, endDate=${endDate}]`);
