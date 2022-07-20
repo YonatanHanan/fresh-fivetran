@@ -137,8 +137,6 @@ export const ReportTypes = [
   'Conversation-Created',
   'Message-Sent',
   'Conversation-Resolved',
-  'CSAT-Score',
-  'Conversation-Resolution-Label',
   'Agent-Activity',
   'Response-Time',
   'Resolution-Time',
