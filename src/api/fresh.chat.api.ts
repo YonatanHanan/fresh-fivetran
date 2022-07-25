@@ -104,7 +104,8 @@ export const getUsers = async (usersIds: string[]) => {
 
 export const getConversation = async (conversationId) => {
   const response = await get(freshChatAPI, `${FreshChatEndpoints.conversation}/${conversationId}`);
-  return response[0];
+  const messages = await get(freshChatAPI, `${FreshChatEndpoints.conversation}/${conversationId}/messages`);
+  return { conversation: response[0], messages: messages[0].messages };
 };
 
 export const getConversations = async (conversationIds: string[]) => {

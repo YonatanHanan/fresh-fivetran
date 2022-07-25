@@ -92,8 +92,13 @@ export const freshChatHandler = async (event: FivetranRequest, context, callback
       ...map(insertObject['freshchat_report_resolution_time'], (row) => row.conversation_id),
     ])
   );
-  insertObject['freshchat_conversation'] = await getConversations(conversationIds);
-  console.log(`freshchat_conversation [length=${insertObject['freshchat_conversation'].length}]`);
+
+  const conversations = await getConversations(conversationIds);
+  insertObject['freshchat_conversation'] = conversations.map((conversations) => conversations.conversation);
+  insertObject['freshchat_messages'] = flatten(conversations.map((conversations) => conversations.messages));
+  console.log(
+    `freshchat_conversation [conversations=${insertObject['freshchat_conversation'].length},messages=${insertObject['freshchat_messages'].length}]`
+  );
 
   console.log(`insertObject ${JSON.stringify(Object.keys(insertObject))}`);
 
