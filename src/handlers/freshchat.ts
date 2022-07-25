@@ -93,12 +93,20 @@ export const freshChatHandler = async (event: FivetranRequest, context, callback
     ])
   );
 
-  const conversations = await getConversations(conversationIds);
-  insertObject['freshchat_conversation'] = conversations.map((conversations) => conversations.conversation);
-  insertObject['freshchat_messages'] = flatten(conversations.map((conversations) => conversations.messages));
-  console.log(
-    `freshchat_conversation [conversations=${insertObject['freshchat_conversation'].length},messages=${insertObject['freshchat_messages'].length}]`
-  );
+  try {
+    console.log(`total [conversationIds=${conversationIds.length}]`);
+    const conversations = await getConversations(conversationIds);
+    insertObject['freshchat_conversation'] = conversations.map((conversations) => conversations.conversation);
+    insertObject['freshchat_messages'] = flatten(conversations.map((conversations) => conversations.messages));
+    console.log(
+      `freshchat_conversation [conversations=${insertObject['freshchat_conversation'].length},messages=${insertObject['freshchat_messages'].length}]`
+    );
+  } catch (error) {
+    console.error(`getConversations fail [error=${error.toString()}]`);
+
+    callback(new Error('getConversations fail'), null);
+    return;
+  }
 
   console.log(`insertObject ${JSON.stringify(Object.keys(insertObject))}`);
 
